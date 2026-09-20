@@ -1,1 +1,618 @@
 /* Your SCSS here. */
+// ===================================================
+// Variables (requirement 13: SCSS variables/mixins)
+// ===================================================
+$color-bg: #0d1117;
+$color-bg-alt: #12181f;
+$color-surface: #1a2029;
+$color-text: #e6edf3;
+$color-text-dim: #9aa7b5;
+$color-accent: #7c4dff;
+$color-accent-2: #0fb8a4;
+$font-heading: 'Poppins', sans-serif;
+$font-body: 'Inter', sans-serif;
+
+$navbar-height-top: 96px;
+$navbar-height-scrolled: 56px;
+
+@mixin flex-center($dir: row) {
+  display: flex;
+  flex-direction: $dir;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin section-padding {
+  padding: 6rem 1.5rem;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: $font-body;
+  background: $color-bg;
+  color: $color-text;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3 { font-family: $font-heading; font-weight: 700; }
+ul { list-style: none; }
+a { color: inherit; text-decoration: none; }
+
+.btn {
+  display: inline-block;
+  padding: 0.85rem 1.75rem;
+  background: linear-gradient(135deg, $color-accent, $color-accent-2);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(124, 77, 255, .35); }
+
+  &--ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,.25);
+    padding: 0.6rem 1.3rem;
+    font-size: .9rem;
+
+    &:hover { background: rgba(255,255,255,.08); box-shadow: none; }
+  }
+}
+
+// ===================================================
+// Requirement 1: full-width horizontal stripes
+// ===================================================
+.stripe {
+  width: 100%;
+  position: relative;
+  @include section-padding;
+
+  &--alt { background: $color-bg-alt; }
+
+  &__content {
+    max-width: 1100px; // requirement 8: horizontal centering
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 56px;
+    height: 4px;
+    margin: .75rem auto 0;
+    background: linear-gradient(90deg, $color-accent, $color-accent-2);
+    border-radius: 2px;
+  }
+}
+
+// ===================================================
+// Requirement 14: CSS3 scroll-reveal animation
+// ===================================================
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  &.is-visible { animation: fadeInUp .7s ease forwards; }
+}
+
+// ===================================================
+// Requirement 2 & 4: sticky + resizing navbar
+// ===================================================
+.navbar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: $navbar-height-top;
+  background: rgba(13,17,23,.85);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  transition: height .25s ease, box-shadow .25s ease;
+  display: flex;
+  align-items: center;
+
+  &.is-scrolled {
+    height: $navbar-height-scrolled;
+    box-shadow: 0 4px 20px rgba(0,0,0,.35);
+  }
+
+  &__inner {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__logo {
+    font-family: $font-heading;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: $color-accent-2;
+  }
+
+  &__links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+}
+
+.nav-link {
+  position: relative;
+  font-size: 1rem;
+  font-weight: 500;
+  color: $color-text-dim;
+  transition: color .2s ease, font-size .25s ease;
+  padding-bottom: 4px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -2px;
+    width: 0; height: 2px;
+    background: linear-gradient(90deg, $color-accent, $color-accent-2);
+    transition: width .25s ease;
+  }
+
+  &:hover { color: $color-text; }
+
+  // requirement 3: position indicator
+  &.active {
+    color: #fff;
+    &::after { width: 100%; }
+  }
+}
+
+.navbar.is-scrolled .nav-link { font-size: .88rem; }
+
+// ===================================================
+// Header / hero
+// ===================================================
+.header {
+  min-height: 100vh;
+  @include flex-center(column);
+  text-align: center;
+  padding-top: $navbar-height-top;
+  background: radial-gradient(circle at 50% 20%, #1a2333 0%, $color-bg 70%);
+  overflow: hidden;
+
+  #hero-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  &__content {
+    position: relative; z-index: 1;
+    @include flex-center(column);
+    gap: .75rem;
+  }
+
+  &__eyebrow { color: $color-accent-2; font-weight: 500; letter-spacing: .05em; }
+  &__title { font-size: clamp(2.5rem, 8vw, 5rem); }
+  &__subtitle {
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    color: $color-text-dim;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+    max-width: 40ch;
+  }
+}
+
+// ===================================================
+// About — vertical + horizontal centering (requirement 8)
+// ===================================================
+.about {
+  min-height: 70vh;
+  @include flex-center;
+
+  &__content { width: 100%; }
+
+  &__center {
+    @include flex-center(column);
+    text-align: center;
+    min-height: 40vh;
+    gap: 1.25rem;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+}
+
+// ===================================================
+// Requirement 7: multi-column layout
+// ===================================================
+.skills__columns {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.skills__column {
+  background: $color-surface;
+  border-radius: 12px;
+  padding: 1.75rem;
+
+  h3 { color: $color-accent-2; margin-bottom: 1rem; font-size: 1.1rem; }
+
+  li {
+    padding: .35rem 0;
+    color: $color-text-dim;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    &:last-child { border-bottom: none; }
+  }
+}
+
+// requirement 9: explicit checkpoints at 1024 and 768 widths
+@media (max-width: 1024px) { .skills__columns { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px)  { .skills__columns { grid-template-columns: 1fr; } }
+
+// ===================================================
+// Requirement 6: carousel (no inline styles — modifier classes)
+// ===================================================
+.carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  &__track-wrap { overflow: hidden; width: 100%; border-radius: 16px; }
+  &__track { display: flex; transition: transform .5s ease; }
+
+  &__slide {
+    flex: 0 0 100%;
+    min-height: 320px;
+    @include flex-center;
+    padding: 2rem;
+
+    &--1 { background: linear-gradient(135deg, #5b6ee1, #7c4dff); }
+    &--2 { background: linear-gradient(135deg, #0fb8a4, #0a9396); }
+    &--3 { background: linear-gradient(135deg, #ff7e5f, #feb47b); }
+    &--4 { background: linear-gradient(135deg, #8e2de2, #4a00e0); }
+  }
+
+  &__slide-content {
+    text-align: center;
+    max-width: 500px;
+    color: #fff;
+
+    h3 { margin-bottom: .75rem; font-size: 1.6rem; }
+    p { margin-bottom: 1rem; }
+  }
+
+  &__arrow {
+    flex: 0 0 auto;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: $color-surface;
+    color: $color-text;
+    font-size: 1.1rem;
+    cursor: pointer;
+    z-index: 2;
+    transition: background .2s ease;
+    &:hover { background: $color-accent; color: #fff; }
+  }
+
+  &__dots { @include flex-center; gap: .5rem; margin-top: 1.25rem; }
+}
+
+.carousel__dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: $color-surface;
+  border: none;
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
+  &.active { background: $color-accent-2; transform: scale(1.2); }
+}
+
+// ===================================================
+// Games section (embedded game + external links)
+// ===================================================
+.games__intro {
+  text-align: center;
+  color: $color-text-dim;
+  max-width: 640px;
+  margin: 0 auto 2.5rem;
+}
+
+.games__grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  align-items: start;
+
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
+}
+
+.games__embed-card {
+  background: $color-surface;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.games__embed-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-bottom: .5rem;
+
+  h3 { font-size: 1.15rem; }
+}
+
+.games__badge {
+  display: inline-block;
+  margin-left: .5rem;
+  font-size: .68rem;
+  font-weight: 600;
+  color: $color-text-dim;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 999px;
+  padding: .15rem .6rem;
+  vertical-align: middle;
+}
+
+.games__newtab { flex: 0 0 auto; }
+
+.games__caption {
+  color: $color-text-dim;
+  font-size: .85rem;
+  margin-bottom: 1rem;
+}
+
+.games__frame {
+  width: 100%;
+  height: 640px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  background: #12161d;
+  display: block;
+
+  @media (max-width: 700px) { height: 480px; }
+}
+
+.games__links {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  h3 { font-size: 1rem; color: $color-text-dim; margin-bottom: .25rem; }
+}
+
+.games__link-card {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  background: $color-surface;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  transition: transform .2s ease, border-color .2s ease;
+
+  &:hover { transform: translateY(-2px); border-color: $color-accent-2; }
+}
+
+.games__link-title { font-weight: 600; }
+.games__link-sub { font-size: .78rem; color: $color-accent-2; }
+
+.games__fallback {
+  margin-top: .75rem;
+  font-size: .8rem;
+  color: $color-text-dim;
+
+  a { color: $color-accent-2; text-decoration: underline; }
+}
+
+// ===================================================
+// Requirement 10: fixed background-image section
+// ===================================================
+.journey {
+  background-image:
+    linear-gradient(rgba(13,17,23,.82), rgba(13,17,23,.88)),
+    url("../assets/image.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; // <- the actual requirement
+  min-height: 60vh;
+  @include flex-center;
+
+  &__content { text-align: center; }
+
+  &__timeline {
+    max-width: 600px;
+    margin: 2rem auto 0;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    li { color: $color-text-dim; }
+    strong { color: $color-accent-2; margin-right: .5rem; }
+  }
+}
+
+// ===================================================
+// Lab section (canvas + video)
+// ===================================================
+.lab__intro { text-align: center; color: $color-text-dim; margin-bottom: 2.5rem; }
+
+.lab__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  @media (max-width: 800px) { grid-template-columns: 1fr; }
+}
+
+.lab__card {
+  background: $color-surface;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  h3 { margin-bottom: 1rem; }
+}
+
+.lab__canvas {
+  width: 100%; height: 220px;
+  background: #0a0e14;
+  border-radius: 8px;
+  display: block;
+}
+
+.lab__video { width: 100%; border-radius: 8px; display: block; background: #000; }
+.lab__caption { color: $color-text-dim; font-size: .85rem; margin-top: .75rem; }
+
+// ===================================================
+// Contact
+// ===================================================
+.contact__content { text-align: center; }
+
+.contact__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 480px;
+  margin: 2rem auto 0;
+  text-align: left;
+
+  input, textarea {
+    background: $color-surface;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 8px;
+    padding: .85rem 1rem;
+    color: $color-text;
+    font-family: $font-body;
+    resize: vertical;
+    &:focus { outline: none; border-color: $color-accent; }
+  }
+
+  .btn { align-self: center; margin-top: .5rem; }
+}
+
+.contact__status { margin-top: 1rem; color: $color-accent-2; font-weight: 500; min-height: 1.5em; }
+
+// ===================================================
+// Requirement 15/16: scalable vector icons + social icons
+// ===================================================
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: $color-surface;
+  color: $color-text-dim;
+  transition: color .2s ease, background .2s ease, transform .2s ease;
+
+  &:hover { color: #fff; background: $color-accent; transform: translateY(-2px); }
+}
+
+// ===================================================
+// Footer
+// ===================================================
+.footer { padding: 2.5rem 1.5rem; background: #080b0f; }
+.footer__content {
+  @include flex-center(column);
+  gap: 1rem;
+  color: $color-text-dim;
+  font-size: .9rem;
+}
+.footer__socials { display: flex; gap: 1rem; }
+
+// ===================================================
+// Requirement 11: Modal
+// ===================================================
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translate(-50%, -46%); }
+  to   { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: none;
+
+  &.is-open { display: block; }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+  }
+
+  &__dialog {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90vw, 480px);
+    max-height: 80vh;
+    overflow-y: auto;
+    background: $color-surface;
+    border-radius: 16px;
+    padding: 2rem;
+    animation: modalFadeIn .3s ease forwards;
+
+    h3 { margin-bottom: 1rem; color: $color-accent-2; }
+    p { color: $color-text-dim; margin-bottom: 1rem; }
+  }
+
+  &__close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,.08);
+    color: $color-text;
+    font-size: 1.3rem;
+    cursor: pointer;
+    &:hover { background: $color-accent; }
+  }
+
+  &__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+
+    li {
+      background: rgba(124,77,255,.15);
+      color: $color-accent-2;
+      padding: .3rem .75rem;
+      border-radius: 999px;
+      font-size: .8rem;
+    }
+  }
+}
+
+// ===================================================
+// Requirement 9: responsive checkpoints
+// 1920x1080 / 1366x768 / 1280x720 → default styles above already work
+// 1024x768 and 768x1024 handled explicitly below
+// ===================================================
+@media (max-width: 1024px) {
+  .lab__grid { grid-template-columns: 1fr; }
+  .stripe { padding: 4.5rem 1.25rem; }
+}
+
+@media (max-width: 800px) {
+  .navbar__links { gap: 1rem; }
+  .nav-link { font-size: .85rem; }
+  .navbar.is-scrolled .nav-link { font-size: .75rem; }
+  .header__title { font-size: 2.5rem; }
+  .modal__dialog { padding: 1.5rem; }
+}
